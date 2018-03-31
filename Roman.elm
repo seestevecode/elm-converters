@@ -1,6 +1,5 @@
 module Roman exposing (..)
 
-import Regex exposing (Regex)
 import List.Extra as ListX
 
 
@@ -64,11 +63,6 @@ arabicToRoman arabicString =
 romanToArabic : String -> String
 romanToArabic romanString =
     let
-        validRomanRE =
-            Regex.regex
-                "^M{0,4}(CM|CD|D?C{0,3})(XC|XL|L?X{0,3})(IX|IV|V?I{0,3})$"
-                |> Regex.caseInsensitive
-
         sumArabic : List Int -> Int
         sumArabic ls =
             case ls of
@@ -84,12 +78,9 @@ romanToArabic romanString =
                     else
                         y - x + sumArabic zs
     in
-        if Regex.contains validRomanRE romanString then
             romanString
                 |> String.toUpper
                 |> String.toList
                 |> List.map romanCharToInt
                 |> sumArabic
                 |> toString
-        else
-            "Cannot convert this"

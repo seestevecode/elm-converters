@@ -4,6 +4,7 @@ import Html exposing (Html)
 import Html.Attributes as Attrib
 import Html.Events as Events
 import Converters exposing (Converter)
+import Regex exposing (Regex)
 
 
 allConverters : List Converter
@@ -50,7 +51,19 @@ update msg model =
         Convert str ->
             { model
                 | inputString = str
-                , outputString = model.converter.convertFunction str
+                , outputString =
+                    let
+                        validRE =
+                            if model.converter.filterCaseInsensitive == True then
+                                Regex.regex model.converter.inputFilter
+                                    |> Regex.caseInsensitive
+                            else
+                                Regex.regex model.converter.inputFilter
+                    in
+                        if Regex.contains validRE model.inputString then
+                            model.converter.convertFunction str
+                        else
+                            "Cannot convert this"
             }
 
         Clear ->
